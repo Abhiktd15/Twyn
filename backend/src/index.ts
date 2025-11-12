@@ -1,19 +1,11 @@
-import express from "express";
-import cors from 'cors'
-import dotenv from 'dotenv'
-import { connectDB } from "./utils/db.ts";
-dotenv.config()
+import express from 'express'
 
-const app = express();
-const PORT = process.env.PORT || 8000;
+import userRouter from './routes/user.routes.js'
 
-app.use(express.json());
+const app = express()
 
-app.get("/", (req, res) => {
-    res.send("Hello from TypeScript + Express backend!");
-});
+app.use('/user',userRouter)
 
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on ${PORT}`);
-    connectDB()
-});
+app.listen(3000,() => {
+    console.log(`Server is running at port 3000 `)
+})
