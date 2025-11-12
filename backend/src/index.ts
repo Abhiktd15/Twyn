@@ -13,7 +13,7 @@ app.use(express.json())
 // app.use(express.urlencoded({extended:true})
 
 // App Routes
-app.use('/user',userRouter)
+app.use('/api/user',userRouter)
 
 app.listen(3000,() => {
     console.log(`Server is running at port 3000 `)

@@ -1,27 +1,45 @@
-// import type { Request, Response } from "express";
-// import jwt from "jsonwebtoken";
-// import User from "../models/user.model.js";
-// import dotenv from "dotenv";
-// import type { NextFunction } from "express";
-// dotenv.config();
+import type { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import User from "../models/user.model.js";
 
-// export const isAuthenticated = async (req : Request, res : Response, next:NextFunction): Promise<void> => {
-//     try {
-//         const token = req.header('Authorization')?.replace('Bearer ', '');
-//         if (!token) {
-//             return res.status(401).json({ message: 'No token provided' });
-//         }
+dotenv.config();
 
-//         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//         const user = await User.findById(decoded.id).select('-password');
-//         if (!user) {
-//             return res.status(401).json({ message: 'Invalid token' });
-//         }
+interface JwtPayload {
+    id: string;
+}
 
-//         req.user = user;
-//         next();
+export const isAuthenticated = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+    try {
+        const authHeader = req.header("Authorization");
+        const token = authHeader?.startsWith("Bearer ")
+        ? authHeader.split(" ")[1]
+        : undefined;
 
-//     } catch (error) {
-//         return res.status(401).json({ message: 'Unauthorized' });
-//     }
-// }       
+        if (!token) {
+            res.status(401).json({ message: "No token provided" });
+            return; 
+        }
+
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET as string
+        ) as JwtPayload;
+
+        const user = await User.findById(decoded.id).select("-password");
+
+        if (!user) {
+            res.status(401).json({ message: "Invalid token" });
+            return;
+        }
+
+        (req as any).user = user;
+        next();
+    } catch (error) {
+        res.status(401).json({ message: "Unauthorized" });
+    }
+};
