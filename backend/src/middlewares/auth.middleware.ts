@@ -21,7 +21,7 @@ export const isAuthenticated = async (
         : undefined;
 
         if (!token) {
-            res.status(401).json({ message: "No token provided" });
+            res.status(401).json({ message: "Unauthorized!!" });
             return; 
         }
 
