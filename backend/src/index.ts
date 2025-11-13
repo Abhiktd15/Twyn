@@ -3,6 +3,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 
 import userRouter from './routes/user.routes.js'
+import postRouter from './routes/post.routes.js'
 import connectDB from './lib/db.js'
 
 dotenv.config()
@@ -14,6 +15,7 @@ app.use(express.json())
 
 // App Routes
 app.use('/api/user',userRouter)
+app.use('/api/post',postRouter)
 
 app.listen(3000,() => {
     console.log(`Server is running at port 3000 `)
