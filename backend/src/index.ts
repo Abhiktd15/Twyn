@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 
 import userRouter from './routes/user.routes.js'
 import postRouter from './routes/post.routes.js'
+import notificationRouter from './routes/notification.routes.js'
 import connectDB from './lib/db.js'
 
 dotenv.config()
@@ -16,6 +17,7 @@ app.use(express.json())
 // App Routes
 app.use('/api/user',userRouter)
 app.use('/api/post',postRouter)
+app.use('/api/notification',notificationRouter)
 
 app.listen(3000,() => {
     console.log(`Server is running at port 3000 `)
