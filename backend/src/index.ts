@@ -21,7 +21,7 @@ app.use('/api/post',postRouter)
 app.use('/api/notification',notificationRouter)
 app.use('/api/comment',commentRouter)
 app.get("/", (req, res) => {
-    res.send("Hello from Vercel backend!");
+    res.send("Hello from Render Backend!");
 });
 
 app.listen(3000,() => {
