@@ -20,6 +20,9 @@ app.use('/api/user',userRouter)
 app.use('/api/post',postRouter)
 app.use('/api/notification',notificationRouter)
 app.use('/api/comment',commentRouter)
+app.get("/", (req, res) => {
+    res.send("Hello from Vercel backend!");
+});
 
 app.listen(3000,() => {
     console.log(`Server is running at port 3000 `)
