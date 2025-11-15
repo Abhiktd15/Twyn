@@ -1,15 +1,10 @@
 {
     "version": 2,
+    "cwd": "backend",
     "builds": [
-        {
-        "src": "dist/index.js",
-        "use": "@vercel/node"
-        }
+        { "src": "dist/index.js", "use": "@vercel/node" }
     ],
     "routes": [
-        {
-        "src": "/(.*)",
-        "dest": "dist/index.js"
-        }
+        { "src": "/(.*)", "dest": "dist/index.js" }
     ]
 }
