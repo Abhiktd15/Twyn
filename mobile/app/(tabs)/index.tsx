@@ -1,7 +1,7 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import { Feather, Ionicons } from '@expo/vector-icons'
 import SignoutButton from '@/components/SignoutButton'
+import { Ionicons } from '@expo/vector-icons'
+import React from 'react'
+import { Text, View } from 'react-native'
 
 const index = () => {
     return (

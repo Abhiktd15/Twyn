@@ -1,7 +1,10 @@
+import { API_BASE_URL } from '@/utils/api'
+import { Ionicons } from '@expo/vector-icons'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import axios from 'axios'
+import { Link, router } from 'expo-router'
 import React from 'react'
-import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import {Ionicons} from '@expo/vector-icons'
-import { Link } from 'expo-router'
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 const Signup = () => {
     const [signupData,setsignupData] = React.useState({
@@ -9,7 +12,23 @@ const Signup = () => {
         email:'',
         password:''
     })
+    const [isLoading,setIsLoading] = React.useState(false)
     const [showPassword,setShowPassword] = React.useState(false)
+
+    const handleRegister = async () => {
+        setIsLoading(true);
+        try {
+            const response = await axios.post(`${API_BASE_URL}/user/new`,signupData)
+            await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
+            await AsyncStorage.setItem("token", response.data.token);
+            router.replace('/(tabs)');
+        } catch (error:any) {
+            console.log("Registration Error:", error.response?.data || error.message);
+            Alert.alert("Registration Failed", "Something went wrong during registration. Please try again.");
+        }
+        setIsLoading(false);
+    }
+
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -29,7 +48,7 @@ const Signup = () => {
                         {/* Username */}
                         <View className='mb-5'>
                             <Text className='font-medium text-sm text-white '>Username</Text>
-                            <View className='mt-2  bg-white border rounded-xl border-gray-500 flex flex-row items-center  px-4'>
+                            <View className='mt-2  bg-white border rounded-xl border-gray-500 flex flex-row items-center  px-4 py-3'>
                                 <Ionicons name='person-outline' size={20} />
                                 <TextInput 
                                     placeholder='johndoe'
@@ -37,7 +56,7 @@ const Signup = () => {
                                     keyboardType='default'
                                     autoCapitalize='words'
                                     value={signupData.username}
-                                    className='font-medium text-lg  ml-4 text-black '
+                                    className='font-medium text-lg  flex-1 h-full  ml-4 mb-2 text-black '
                                     onChangeText={(text) => setsignupData({...signupData,username:text})}
                                 />
                             </View>
@@ -45,7 +64,7 @@ const Signup = () => {
                         {/* Email */}
                         <View className='mb-5'>
                             <Text className='font-medium text-sm text-white '>Email</Text>
-                            <View className='mt-2 bg-white border rounded-xl border-gray-500 flex flex-row items-center  px-4'>
+                            <View className='mt-2 bg-white border rounded-xl border-gray-500 flex flex-row items-center  px-4 py-3'>
                                 <Ionicons name='mail-outline' size={20} />
                                 <TextInput 
                                     placeholder='john@gmail.com'
@@ -53,7 +72,7 @@ const Signup = () => {
                                     keyboardType='default'
                                     autoCapitalize='none'
                                     value={signupData.email}
-                                    className='font-medium text-lg  ml-4 text-black '
+                                    className='font-medium text-lg flex-1 h-full ml-4 mb-2 text-black '
                                     onChangeText={(text) => setsignupData({...signupData,email:text})}
                                 />
                             </View>
@@ -61,14 +80,14 @@ const Signup = () => {
                         {/* Password */}
                         <View className='mb-5'>
                             <Text className='font-medium text-sm text-white '>Password</Text>
-                            <View className='mt-2 bg-white border rounded-xl border-gray-500 flex flex-row items-center px-4'>
+                            <View className='mt-2 bg-white border rounded-xl border-gray-500 flex flex-row items-center px-4 py-3'>
                                 <Ionicons name='lock-closed-outline' size={20} />
                                 <TextInput 
                                     placeholder='*******'
                                     placeholderTextColor={"gray"}
                                     secureTextEntry={!showPassword}
                                     value={signupData.password}
-                                    className='font-medium text-lg  ml-4 text-black '
+                                    className='font-medium text-lg flex-1 h-full ml-4 text-black '
                                     onChangeText={(text) => setsignupData({...signupData,password:text})}
                                 />
                                 {/* eye icon */}
@@ -83,12 +102,12 @@ const Signup = () => {
                         </View>
                     </View>
                     {/* Login Button */}
-                    <TouchableOpacity className='border border-gray-500 flex items-center justify-center elevation-sm bg-white rounded-xl h-14 mt-4'>
-                        {/* {isLoading ?
-                            <ActivityIndicator size="small" color={COLORS.white} />
-                        : */}
+                    <TouchableOpacity onPress={handleRegister} className='border border-gray-500 flex items-center justify-center elevation-sm bg-white rounded-xl h-14 mt-4'>
+                        {isLoading ?
+                            <ActivityIndicator size="small" color="black" />
+                        :
                             <Text className='text-black text-center text-base font-semibold'>Sign Up</Text>
-                        {/* } */}
+                        }
                     </TouchableOpacity>
                     {/* Footer */}
                     <View className='mt-6 flex flex-row items-center justify-center mr-5' >
