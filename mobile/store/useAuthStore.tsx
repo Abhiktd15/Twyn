@@ -4,14 +4,7 @@ import AsyncStorage  from '@react-native-async-storage/async-storage'
 import { API_BASE_URL } from '@/constants/constants';
 import axios from 'axios';
 import { router } from 'expo-router';
-
-export type User = {
-    username?:string;
-    email?:string;
-    password?:string;
-    profileImage?:string;
-    createdAt?:string;
-}
+import { User } from '@/types/types';
 
 type StoreState = {
     user: User | null;
