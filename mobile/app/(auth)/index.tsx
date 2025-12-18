@@ -1,13 +1,8 @@
-// import  from '@/assets//login.'
-// import COLORS from '@/constants/colors'
-// import { useAuthStore } from '@/store/authStore'
-import React, { useState } from 'react'
+import { useAuthStore } from '@/store/useAuthStore'
+import { Ionicons } from '@expo/vector-icons'
+import { Link } from 'expo-router'
+import React from 'react'
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import {Ionicons} from '@expo/vector-icons'
-import { Link, router } from 'expo-router'
-import axios from 'axios'
-import { API_BASE_URL } from '@/utils/api'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Login = () => {
     const [signupData,setsignupData] = React.useState({
@@ -15,19 +10,12 @@ const Login = () => {
         password:''
     })
     const [showPassword,setShowPassword] = React.useState(false)
-    const [isLoading,setIsLoading] = useState(false)
+    const {isLoading,login} = useAuthStore()
     const handleLogin = async () => {
-        setIsLoading(true);
-        try {
-            const response = await axios.post(`${API_BASE_URL}/user/login`,signupData)
-            await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
-            await AsyncStorage.setItem("token", response.data.token);
-            router.replace('/(tabs)');
-        } catch (error:any) {
-            console.log("Login Error:", error.response?.data || error.message);
-            Alert.alert("Login Failed", "Something went wrong. Please try again.");
+        const result = await login(signupData)
+        if(!result.success){
+            Alert.alert("error",result.error || "Login failed")
         }
-        setIsLoading(false);
     }
     return (
         <KeyboardAvoidingView

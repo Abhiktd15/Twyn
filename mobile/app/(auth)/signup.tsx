@@ -1,8 +1,6 @@
-import { API_BASE_URL } from '@/utils/api'
+import { useAuthStore } from '@/store/useAuthStore'
 import { Ionicons } from '@expo/vector-icons'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import axios from 'axios'
-import { Link, router } from 'expo-router'
+import { Link } from 'expo-router'
 import React from 'react'
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
@@ -12,21 +10,14 @@ const Signup = () => {
         email:'',
         password:''
     })
-    const [isLoading,setIsLoading] = React.useState(false)
     const [showPassword,setShowPassword] = React.useState(false)
-
+    
+    const {isLoading,register} = useAuthStore()
     const handleRegister = async () => {
-        setIsLoading(true);
-        try {
-            const response = await axios.post(`${API_BASE_URL}/user/new`,signupData)
-            await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
-            await AsyncStorage.setItem("token", response.data.token);
-            router.replace('/(tabs)');
-        } catch (error:any) {
-            console.log("Registration Error:", error.response?.data || error.message);
-            Alert.alert("Registration Failed", "Something went wrong during registration. Please try again.");
+        const result = await register(signupData)
+        if(!result.success){
+            Alert.alert("error",result.error || "Registration failed")
         }
-        setIsLoading(false);
     }
 
     return (

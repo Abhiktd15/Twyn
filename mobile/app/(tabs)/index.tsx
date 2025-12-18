@@ -1,7 +1,8 @@
+import PostComposer from '@/components/PostComposer'
 import SignoutButton from '@/components/SignoutButton'
 import { Ionicons } from '@expo/vector-icons'
 import React from 'react'
-import { Text, View } from 'react-native'
+import { ScrollView, Text, View } from 'react-native'
 
 const index = () => {
     return (
@@ -12,6 +13,10 @@ const index = () => {
                 <Text className='text-2xl font-bold text-black'>Home</Text>
                 <SignoutButton/>
             </View>
+            {/* Post Composer Component */}
+            <ScrollView showsVerticalScrollIndicator={false} >
+                <PostComposer/>
+            </ScrollView>
         </View>
     )
 }

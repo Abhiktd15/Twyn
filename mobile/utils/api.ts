@@ -1,9 +1,9 @@
-import { getToken } from '@/hooks/useAuth';
+import { API_BASE_URL } from '@/constants/constants';
+import { useAuthStore } from '@/store/useAuthStore';
 import { User } from '@/types/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios ,{AxiosInstance} from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
-export const API_BASE_URL = 'http://localhost:3000/api';
 
 const createAPIClient = (getToken:() => Promise<string | null>):AxiosInstance => {
     const apiClient = axios.create({
@@ -22,7 +22,9 @@ const createAPIClient = (getToken:() => Promise<string | null>):AxiosInstance =>
 }
 
 export const useApiClient = (): AxiosInstance => {
-    return createAPIClient(getToken);
+    const { token } = useAuthStore();
+
+    return createAPIClient(token);
 };
 
 export const userApi = {
