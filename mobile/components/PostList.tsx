@@ -4,6 +4,7 @@ import { Post, User } from '@/types/types'
 import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, Text, View } from 'react-native'
 import PostCard from './PostCard'
+import CommentsModal from './CommentsModal'
 
 const PostList = () => {
     const {getCurrUser,user,token} = useAuthStore()
@@ -19,7 +20,6 @@ const PostList = () => {
     const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
 
     const selectedPost = selectedPostId ? posts?.find((p: Post) => p._id === selectedPostId) : null;
-
 
     if(isFetching){
         return <View className='p-8 items-center'>
@@ -57,6 +57,8 @@ const PostList = () => {
                     isLiked={checkIsLiked(post.likes, user)}
                 />
             ) )}
+            <CommentsModal selectedPost={selectedPost} onClose={() => setSelectedPostId(null)} />
+
         </>
     )
 }

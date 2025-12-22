@@ -31,6 +31,9 @@ type StoreState = {
     createPost: (postData:postData,token:string) => Promise<{success: boolean; error?: string}>;
     fetchAllPosts : (token:string) => Promise<{success: boolean; error?: string}>;
     toogleLike: (token:string,postId:string,userId:string) => Promise<{success: boolean; error?: string}>;
+    createComment: (token:string,postId:string,comment:string) => Promise<{success: boolean; error?: string}>;
+    
+    
 }
 
 export const usePostStore = create<StoreState>((set,get) => ({
@@ -124,6 +127,34 @@ export const usePostStore = create<StoreState>((set,get) => ({
             return {success:true}
         } catch (error:any) {
             set({posts})
+            return{
+                success:false,
+                error:error?.message
+            }
+        }
+    },
+
+    createComment: async (token:string,postId:string,comment:string) => {
+        set({isLoading:true})
+        const {fetchAllPosts} = get()
+        try {
+            const response = await fetch(`${API_BASE_URL}/comment/post/${postId}`,{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json",
+                    "Authorization":`Bearer ${token}`
+                },
+                body:JSON.stringify({content:comment})
+            })
+            if(response.status !== 201){
+                Alert.alert("Comment Failed","Something went wrong")
+                throw new Error("Comment Failed")
+            }
+            await fetchAllPosts(token)
+            set({isLoading:false})
+            return {success:true}
+        } catch (error:any) {
+            set({isLoading:false})
             return{
                 success:false,
                 error:error?.message
