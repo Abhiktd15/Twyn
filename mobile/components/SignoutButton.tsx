@@ -20,7 +20,7 @@ const SignoutButton = () => {
     }
     return (
         <TouchableOpacity onPress={handleSignout}>
-            <Feather name='log-out' color={"red"} size={24}/>
+            <Feather name='log-out' color={"lightgray"} size={24}/>
         </TouchableOpacity>
     )
 }

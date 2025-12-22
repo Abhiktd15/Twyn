@@ -84,7 +84,6 @@ const PostComposer = () => {
                             >
                                 Post
                             </Text>
-                            <Feather name='send' size={14} color={"white"} />
                         </>
                         
                         )}

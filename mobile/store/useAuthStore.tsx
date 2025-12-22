@@ -15,6 +15,7 @@ type StoreState = {
     login: (logindata:User) => Promise<{success:boolean;error?:string}>;
     checkAuth: () => Promise<void>;
     logout: () => Promise<void>;
+    getCurrUser: () => Promise<{success: boolean; error?: string}>;
 }
 
 export const useAuthStore = create<StoreState>((set) => ({
@@ -84,5 +85,26 @@ export const useAuthStore = create<StoreState>((set) => ({
         } catch (error) {
             console.log("Error during logout:", error);
         }
-    }
+    },
+    getCurrUser: async () => {
+        set({isLoading:true})
+        try {
+                const token = await AsyncStorage.getItem("token");
+                if (!token) {
+                    throw new Error("No token found");
+                }
+                const response = await axios.get(`${API_BASE_URL}/user/me`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (response.status !== 200) {
+                    throw new Error(response.data.message || "Failed to fetch user");
+                }
+                set({ user: response.data.user ,isLoading:false});
+                return { success: true };
+            } catch (err:any) {
+                return { success: false, error:err.message};
+            }
+        }
 }))
