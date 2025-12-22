@@ -137,11 +137,13 @@ export const createPost = async (req:Request,res:Response) : Promise<void> => {
             }
         }
     
-        const post = await Post.create({
+        const newPost = await Post.create({
             user: user._id,
             content: content || "", 
             image: imageUrl,
         });
+
+        const post = await Post.findById(newPost._id).populate("user","username profilePic fullName");
     
         res.status(201).json({ post });
     } catch (error:any) {

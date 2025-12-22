@@ -67,14 +67,13 @@ export const useCreatePost = () => {
             }as any)
         }  
 
-        await createPost(formData,token)
-        setContent("")
-        setSelectedImage(null)
+        return formData ;
     }
     return {
         content,
         setContent,
         selectedImage,
+        setSelectedImage,
         pickImageFromGallery: () => handleImagePicker(false),
         takePhoto: () => handleImagePicker(true),
         removeImage: () => setSelectedImage(null),

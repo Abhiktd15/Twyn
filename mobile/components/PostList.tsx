@@ -21,7 +21,7 @@ const PostList = () => {
 
     const selectedPost = selectedPostId ? posts?.find((p: Post) => p._id === selectedPostId) : null;
 
-    if(isFetching){
+    if(isFetching && (!posts || posts.length === 0)){
         return <View className='p-8 items-center'>
             <ActivityIndicator size='large' color='#1DA1F2'/>
             <Text className='text-gray-500 mt-2'>Loading Posts....</Text>

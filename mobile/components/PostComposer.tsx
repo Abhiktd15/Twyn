@@ -13,12 +13,19 @@ const PostComposer = () => {
         pickImageFromGallery,
         takePhoto,
         CreatePost,
+        setSelectedImage,
         removeImage
     } = useCreatePost()
 
-    const {user} = useAuthStore()
-    const {isLoading} = usePostStore()
-    
+    const {user,token} = useAuthStore()
+    const {isLoading,createPost} = usePostStore()
+    const submitPost = async () => {
+        const formData = await CreatePost()
+
+        await createPost(formData,token as string)
+        setContent("")
+        setSelectedImage(null)
+    }
     return (
         <View className='p-4 bg-white border-b border-gray-200'>
             <View className='flex flex-row'>
@@ -70,7 +77,7 @@ const PostComposer = () => {
                         className={`px-6 py-2 rounded-full flex-row items-center gap-2 ${
                         content.trim() || selectedImage ? "bg-blue-500" : "bg-gray-300"
                         }`}
-                        onPress={CreatePost}
+                        onPress={submitPost}
                         disabled={isLoading || !(content.trim() || selectedImage)}
                     >
                         {isLoading ? (
