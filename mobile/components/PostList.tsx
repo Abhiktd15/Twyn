@@ -6,7 +6,11 @@ import { ActivityIndicator, Text, View } from 'react-native'
 import CommentsModal from './CommentsModal'
 import PostCard from './PostCard'
 
-const PostList = () => {
+interface PostListProps {
+    username?:  string | null;
+}
+
+const PostList = ({username} : PostListProps) => {
     const {getCurrUser,user,token} = useAuthStore()
     const {fetchAllPosts,toogleLike,posts,isFetching} = usePostStore()
     useEffect(() => {
@@ -42,11 +46,17 @@ const PostList = () => {
     const checkIsLiked = (likes:string[],user:User) => {
         return likes.includes(user._id)
     }
+
+    let filteredPosts = posts
     
+    // if there is user name filter the post with username as the username 
+    if(username){
+        filteredPosts = posts?.filter((post:Post) => post.user.username === username)
+    }
 
     return (
         <View className='pb-16'>
-            {user && posts?.map((post:Post) => (
+            {user && filteredPosts?.map((post:Post) => (
                 <PostCard 
                     key={post._id}
                     post={post}

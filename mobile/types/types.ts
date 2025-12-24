@@ -1,8 +1,15 @@
 export interface User {
   _id: string;
+  fullName: string;
+  email: string;
   username: string;
-  firstName: string;
-  lastName: string;
+  bannerImg?:string;
+  bio?: string;
+  location?: string;
+  followers: string[];
+  following: string[];
+  createdAt: string;
+  updatedAt: string;
   profilePic?: string;
 }
 

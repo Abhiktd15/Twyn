@@ -18,15 +18,15 @@ type postData  = {
 
 type StoreState = {
     posts: Post[] | null; 
-    userPost:Post | null;
+    userPost:Post[] | null;
     isLoading: boolean;
     isFetching:boolean;
     createPost: (postData:FormData,token:string) => Promise<{success: boolean; error?: string}>;
     fetchAllPosts : (token:string | null) => Promise<{success: boolean; error?: string}>;
     toogleLike: (token:string,postId:string,userId:string) => Promise<{success: boolean; error?: string}>;
     createComment: (token:string,postId:string,comment:string) => Promise<{success: boolean; error?: string}>;
-    
-    
+    fetchUsersPost: (token:string | null,username:string | null) => Promise<{success: boolean; error?: string}>; 
+
 }
 
 export const usePostStore = create(
@@ -155,6 +155,30 @@ export const usePostStore = create(
                     return {success:true}
                 } catch (error:any) {
                     set({isLoading:false})
+                    return{
+                        success:false,
+                        error:error?.message
+                    }
+                }
+            },
+
+            fetchUsersPost: async (token:string | null,username:string | null) => {
+                set({isLoading:true})
+                try {
+                    const response = await fetch(`${API_BASE_URL}/post/user/${username}`,{
+                        method:"GET",
+                        headers:{
+                            "Authorization":`Bearer ${token}`
+                        }
+                    })
+                    if(response.status !== 200){
+                        throw new Error("Fetch post failed!")
+                    }
+                    const data = await response.json()
+                    const posts = data.posts
+                    set({userPost:posts,isLoading:false})
+                    return {success:true}
+                } catch (error:any) {
                     return{
                         success:false,
                         error:error?.message

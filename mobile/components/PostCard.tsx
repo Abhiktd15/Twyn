@@ -35,7 +35,7 @@ const PostCard = ({post,onDelete,onlike,isLiked,currentUser,onComment}:PostCardP
                 <View className='flex-1'>
                     <View className='flex-row items-center justify-between mb-1'>
                         <View className='flex-row items-center'>
-                            <Text className=' font-bold text-gray-900 mr-1'>@{post.user.username}</Text>
+                            <Text className=' font-bold text-gray-900 mr-1'>@{post.user.fullName || post.user.username}</Text>
                             <Text className='text-gray-500 ml-1'>
                                 {formatDate(post.createdAt)}
                             </Text>
