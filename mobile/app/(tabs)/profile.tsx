@@ -1,25 +1,54 @@
+import EditProfileModal from '@/components/EditProfileModal'
 import PostList from '@/components/PostList'
 import SignoutButton from '@/components/SignoutButton'
 import { useAuthStore } from '@/store/useAuthStore'
 import { usePostStore } from '@/store/usePostStore'
 import { Feather } from '@expo/vector-icons'
 import { format } from 'date-fns'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 
 const Profile = () => {
-  const {user,token,getCurrUser} = useAuthStore()
+  const {user,token,getCurrUser,isUpdating,updateProfile} = useAuthStore()
   const {userPost,fetchUsersPost,isLoading} = usePostStore()
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName:"",  
+    bio: "",
+    location: "",
+  });
 
   useEffect(() => {
     fetchUsersPost(token,user?.username as string)
   },[])
-   if (isLoading) {
+  if (isLoading) {
     return (
       <View className="flex-1 bg-white items-center justify-center">
         <ActivityIndicator size="large" color="#1DA1F2" />
       </View>
     );
+  }
+
+  const openEditModal = () => {
+    if (user) {
+      setFormData({
+        fullName:user.fullName || "",
+        bio: user.bio || "",
+        location: user.location || "",
+      });
+    }
+    setIsEditModalVisible(true);
+  };
+  const closeEditModal = () => {
+    setIsEditModalVisible(false)
+  }
+
+  const updateFormField = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const saveProfile = async () => {
+    await updateProfile(token,formData)
   }
   
   return (
@@ -67,7 +96,7 @@ const Profile = () => {
             />
             <TouchableOpacity
               className="border border-gray-300 px-6 py-2 rounded-full"
-              // onPress={openEditModal}
+              onPress={openEditModal}
             >
               <Text className="font-semibold text-gray-900">Edit profile</Text>
             </TouchableOpacity>
@@ -114,6 +143,15 @@ const Profile = () => {
 
         <PostList username={user?.username} />
       </ScrollView>
+
+      <EditProfileModal
+        isVisible={isEditModalVisible}
+        onClose={closeEditModal}
+        formData={formData}
+        saveProfile={saveProfile}
+        updateFormField={updateFormField}
+        isUpdating={isUpdating}
+      />
     </View>
   )
 }

@@ -175,7 +175,7 @@ export const updateProfile = async (req : Request,res:Response) : Promise<void> 
         })
     } catch (error :any) {
         res.status(500).json({
-            message: `Error Getting Current User:${error.message}`,
+            message: `Error updating user profile:${error.message}`,
         });
     }
 }

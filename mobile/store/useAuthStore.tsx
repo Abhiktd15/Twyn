@@ -11,17 +11,20 @@ type StoreState = {
     token: string | null;
     isLoading: boolean;
     isCheckingAuth: boolean;
+    isUpdating:boolean;
     register: (signupData: User) => Promise<{success: boolean; error?: string}>;
     login: (logindata:User) => Promise<{success:boolean;error?:string}>;
     checkAuth: () => Promise<void>;
     logout: () => Promise<void>;
     getCurrUser: () => Promise<{success: boolean; error?: string}>;
+    updateProfile: (token:string|null,updateData:User) => Promise<{success: boolean; error?: string}>;
 }
 
 export const useAuthStore = create<StoreState>((set,get) => ({
     user: null,
     token:null,
     isLoading:false,
+    isUpdating:false,
     isCheckingAuth:false,
 
     register: async (signupData: User) => {
@@ -110,5 +113,28 @@ export const useAuthStore = create<StoreState>((set,get) => ({
             } catch (err:any) {
                 return { success: false, error:err.message};
             }
+        },
+    updateProfile: async (token:string|null,updateData:User) => {
+        set({isUpdating:true})
+        try {
+            const response = await fetch(`${API_BASE_URL}/user/profile`,{
+                method:"PUT",
+                headers:{
+                    "Content-Type":"application/json",
+                    "Authorization":`Bearer ${token}`
+                },
+                body:JSON.stringify(updateData)
+            })
+            if(response.status !== 200){
+                throw new Error("Update failed")
+            }
+            const data = await response.json()
+            set({user:data.user,isUpdating:false})
+            return {success:true}
+        } catch (error:any) {
+            set({isUpdating:false})
+            console.log("Error during update:", error);
+            return { success: false};   
         }
+    }
 }))
