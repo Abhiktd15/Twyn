@@ -15,7 +15,7 @@ const index = () => {
                 <SignoutButton/>
             </View>
             {/* Post Composer Component */}
-            <ScrollView showsVerticalScrollIndicator={false} >
+            <ScrollView showsVerticalScrollIndicator={false} className=''>
                 <PostComposer/>
                 <PostList/>
             </ScrollView>

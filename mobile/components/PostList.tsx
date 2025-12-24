@@ -3,8 +3,8 @@ import { usePostStore } from '@/store/usePostStore'
 import { Post, User } from '@/types/types'
 import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, Text, View } from 'react-native'
-import PostCard from './PostCard'
 import CommentsModal from './CommentsModal'
+import PostCard from './PostCard'
 
 const PostList = () => {
     const {getCurrUser,user,token} = useAuthStore()
@@ -45,7 +45,7 @@ const PostList = () => {
     
 
     return (
-        <>
+        <View className='pb-16'>
             {user && posts?.map((post:Post) => (
                 <PostCard 
                     key={post._id}
@@ -59,7 +59,7 @@ const PostList = () => {
             ) )}
             <CommentsModal selectedPost={selectedPost} onClose={() => setSelectedPostId(null)} />
 
-        </>
+        </View>
     )
 }
 

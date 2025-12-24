@@ -18,7 +18,7 @@ type StoreState = {
     getCurrUser: () => Promise<{success: boolean; error?: string}>;
 }
 
-export const useAuthStore = create<StoreState>((set) => ({
+export const useAuthStore = create<StoreState>((set,get) => ({
     user: null,
     token:null,
     isLoading:false,
@@ -65,11 +65,15 @@ export const useAuthStore = create<StoreState>((set) => ({
         }
     },
     checkAuth: async () => {
+        set({isCheckingAuth:true})
+        const {getCurrUser} = get()
         try {
             const user = await AsyncStorage.getItem("user");
             const token = await AsyncStorage.getItem("token");
             if(user && token){
-                set({user: JSON.parse(user), token})
+                await getCurrUser()
+                set({isCheckingAuth:false})
+                set({token})
             }
         } catch (error:any) {
             console.log("Error checking auth:", error);
