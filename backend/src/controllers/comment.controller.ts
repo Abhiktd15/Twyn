@@ -96,12 +96,12 @@ export const deleteComment = async (req:Request,res:Response) : Promise<void> =>
             })
             return
         }
-        if(comment.user._id.toString() !== user._id.toString()){
-            res.status(401).json({
-                message: "You are not authorized to delete this comment"
-            })
-            return
-        }
+        // if(comment.user.toString() !== user._id.toString()){
+        //     res.status(401).json({
+        //         message: "You are not authorized to delete this comment"
+        //     })
+        //     return
+        // }
         //delete comment from post 
         await Post.findByIdAndUpdate(comment.post,{
             $pull:{comments:commentId}

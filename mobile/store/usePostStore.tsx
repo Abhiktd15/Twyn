@@ -26,6 +26,7 @@ type StoreState = {
     toogleLike: (token:string,postId:string,userId:string) => Promise<{success: boolean; error?: string}>;
     createComment: (token:string,postId:string,comment:string) => Promise<{success: boolean; error?: string}>;
     fetchUsersPost: (token:string | null,username:string | null) => Promise<{success: boolean; error?: string}>; 
+    deleteComment: (token:string,commentId:string) => Promise<{success: boolean; error?: string}>;
 
 }
 
@@ -149,6 +150,32 @@ export const usePostStore = create(
                     if(response.status !== 201){
                         Alert.alert("Comment Failed","Something went wrong")
                         throw new Error("Comment Failed")
+                    }
+                    await fetchAllPosts(token)
+                    set({isLoading:false})
+                    return {success:true}
+                } catch (error:any) {
+                    set({isLoading:false})
+                    return{
+                        success:false,
+                        error:error?.message
+                    }
+                }
+            },
+
+            deleteComment: async (token:string,commentId:string) => {
+                set({isLoading:true})
+                const {fetchAllPosts} = get()
+                try {
+                    const response = await fetch(`${API_BASE_URL}/comment/${commentId}`,{
+                        method:"DELETE",
+                        headers:{
+                            "Authorization":`Bearer ${token}`
+                        }
+                    })
+                    if(response.status !== 200){
+                        Alert.alert("Delete Failed","Something went wrong")
+                        throw new Error("Delete Failed")
                     }
                     await fetchAllPosts(token)
                     set({isLoading:false})

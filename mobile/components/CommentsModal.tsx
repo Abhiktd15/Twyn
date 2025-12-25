@@ -2,6 +2,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { usePostStore } from '@/store/usePostStore';
 import { Post } from '@/types/types';
 import { formatDate } from '@/utils/formatter';
+import { Feather } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,13 +14,14 @@ interface CommentModalProps{
 
 const CommentsModal = ({selectedPost,onClose}:CommentModalProps) => {
     const [commentText,setCommentText] = useState('')
-    const {createComment,isLoading} = usePostStore()
+    const {createComment,isLoading,deleteComment} = usePostStore()
     const {user,token} = useAuthStore()
     const handleClose  = () => {
         onClose()
         setCommentText('')
     }
-
+    const isOwnPost = user?._id === selectedPost?.user?._id
+    
     const postComment = async (postId:string) => {
         if (!commentText.trim()) {
             Alert.alert("Empty Comment", "Please write something before posting!");
@@ -27,6 +29,16 @@ const CommentsModal = ({selectedPost,onClose}:CommentModalProps) => {
         }
         await createComment(token as string,postId,commentText)
         setCommentText('')
+    }
+    const handleDeleteComment = (commentId:string) => {
+        Alert.alert("Delete Comment", "Are you sure you want to delete this comment?", [
+            { text: "Cancel", style: "cancel" },
+            {
+                text: "Delete",
+                style: "destructive",
+                onPress: () => deleteComment(token as string,commentId),
+            },
+        ])
     }
 
     return (
@@ -86,17 +98,21 @@ const CommentsModal = ({selectedPost,onClose}:CommentModalProps) => {
                                 />
 
                                 <View className="flex-1">
-                                <View className="flex-row items-center mb-1">
-                                    <Text className="font-bold text-gray-900 mr-1">
-                                        @{comment.user.username}
-                                    </Text>
-                                    <Text className="text-gray-500 ml-1">
-                                        {formatDate(comment.createdAt)}
-                                    </Text>
+                                    <View className="flex-row items-center mb-1">
+                                        <Text className="font-bold text-gray-900 mr-1">
+                                            @{comment.user.fullName ||comment.user.username}
+                                        </Text>
+                                        <Text className="text-gray-500 ml-1">
+                                            {formatDate(comment.createdAt)}
+                                        </Text>
+                                    </View>
+                                    <Text className="text-gray-900 text-base leading-5 mb-2">{comment.content}</Text>
                                 </View>
-
-                                <Text className="text-gray-900 text-base leading-5 mb-2">{comment.content}</Text>
-                                </View>
+                                {isOwnPost && (
+                                    <TouchableOpacity onPress={() => handleDeleteComment(comment._id)}>
+                                        <Feather name="trash" size={16} color="#E0245E" />
+                                    </TouchableOpacity>
+                                )}
                             </View>
                         </View>
                     ))}
