@@ -27,6 +27,7 @@ type StoreState = {
     createComment: (token:string,postId:string,comment:string) => Promise<{success: boolean; error?: string}>;
     fetchUsersPost: (token:string | null,username:string | null) => Promise<{success: boolean; error?: string}>; 
     deleteComment: (token:string,commentId:string) => Promise<{success: boolean; error?: string}>;
+    toogleFollow: (token:string,targetUserId:string) => Promise<{success: boolean; error?: string}>;
 
 }
 
@@ -135,6 +136,30 @@ export const usePostStore = create(
                 }
             },
 
+            toogleFollow: async (token:string,targetUserId:string) => {
+                set({isLoading:true})
+                try {
+                    const response = await fetch(`${API_BASE_URL}/user/follow/${targetUserId}`,{
+                        method:"POST",
+                        headers:{
+                            "Authorization":`Bearer ${token}`
+                        }
+                    })
+                    if(response.status !== 200){
+                        Alert.alert("Follow Failed","Something went wrong")
+                        throw new Error("Follow Failed")
+                    }
+                    set({isLoading:false})
+                    return {success:true}
+                } catch (error:any) {
+                    set({isLoading:false})
+                    return{
+                        success:false,
+                        error:error?.message
+                    }
+                }
+            },
+
             createComment: async (token:string,postId:string,comment:string) => {
                 set({isLoading:true})
                 const {fetchAllPosts} = get()
@@ -206,6 +231,7 @@ export const usePostStore = create(
                     set({userPost:posts,isLoading:false})
                     return {success:true}
                 } catch (error:any) {
+                    set({isLoading:false})
                     return{
                         success:false,
                         error:error?.message

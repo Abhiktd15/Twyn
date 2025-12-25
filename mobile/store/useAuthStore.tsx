@@ -8,6 +8,7 @@ import { User } from '@/types/types';
 
 type StoreState = {
     user: User | null;
+    targetUser:User | null;
     token: string | null;
     isLoading: boolean;
     isCheckingAuth: boolean;
@@ -18,10 +19,12 @@ type StoreState = {
     logout: () => Promise<void>;
     getCurrUser: () => Promise<{success: boolean; error?: string}>;
     updateProfile: (token:string|null,updateData:User) => Promise<{success: boolean; error?: string}>;
+    getTargettedUserProfile : (username:string|null) => Promise<{success: boolean; error?: string}>;
 }
 
 export const useAuthStore = create<StoreState>((set,get) => ({
     user: null,
+    targetUser:null,
     token:null,
     isLoading:false,
     isUpdating:false,
@@ -77,10 +80,12 @@ export const useAuthStore = create<StoreState>((set,get) => ({
                 await getCurrUser()
                 set({isCheckingAuth:false})
                 set({token})
+            } else {
+                set({user:null,token:null,isCheckingAuth:false})
             }
         } catch (error:any) {
             console.log("Error checking auth:", error);
-            set({user: null, token: null})
+            set({user: null, token: null, isCheckingAuth:false})
         }
     },
     logout: async () => {
@@ -111,6 +116,7 @@ export const useAuthStore = create<StoreState>((set,get) => ({
                 set({ user: response.data.user ,isLoading:false});
                 return { success: true };
             } catch (err:any) {
+                set({isLoading:false})
                 return { success: false, error:err.message};
             }
         },
@@ -135,6 +141,20 @@ export const useAuthStore = create<StoreState>((set,get) => ({
             set({isUpdating:false})
             console.log("Error during update:", error);
             return { success: false};   
+        }
+    },
+    getTargettedUserProfile : async (username:string|null) => {
+        set({isLoading:true})
+        try {
+            const reponse = await axios.get(`${API_BASE_URL}/user/profile/${username}`)
+            if(reponse.status !== 200){
+                throw new Error("Fetch failed")
+            }
+            set({targetUser:reponse.data.user,isLoading:false})
+            return {success:true}
+        } catch (error:any) {
+            set({isLoading:false})
+            return { success: false,error:error.message};
         }
     }
 }))

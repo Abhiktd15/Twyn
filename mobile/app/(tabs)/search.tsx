@@ -1,8 +1,10 @@
 import { Feather } from '@expo/vector-icons'
-import React from 'react'
+import { router } from 'expo-router'
+import React, { useState } from 'react'
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 const Search = () => {
+    const [searchQuery, setSearchQuery] = useState('')
     const Trendingtopics = [
         { topic : "#ReactNative",tweets : "120K Tweets"},
         { topic : "#JavaScript",tweets : "80K Tweets"},
@@ -10,6 +12,13 @@ const Search = () => {
         { topic : "#Expo",tweets : "40K Tweets"},
         { topic : "#TypeScript",tweets : "30K Tweets"},
     ]
+
+    const handleSearch = () => {
+        if (searchQuery.trim()) {
+            router.push(`/searchresult?username=${searchQuery.trim()}`)
+        }
+    }
+
     return (
         <View style={{ flex: 1 }}>
             {/* Header */}
@@ -17,8 +26,11 @@ const Search = () => {
                 <View className='flex flex-row items-center bg-gray-200  rounded-full px-4 py-3 '>
                     <Feather name='search' size={20} color='gray' />
                     <TextInput
-                        placeholder='Search Twyn...'
+                        placeholder='Search Twyn by username...'
                         className='flex-1 ml-3 text-base '
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
+                        onSubmitEditing={handleSearch}
                     />
                 </View>
             </View>

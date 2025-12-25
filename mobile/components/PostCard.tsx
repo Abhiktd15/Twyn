@@ -1,6 +1,8 @@
+import { useAuthStore } from '@/store/useAuthStore';
 import { Post, User } from '@/types/types';
 import { formatDate, formatNumber } from '@/utils/formatter';
 import { AntDesign, Feather } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { Alert, Image, Text, TouchableOpacity, View } from 'react-native';
 
@@ -15,6 +17,8 @@ interface PostCardProps{
 
 const PostCard = ({post,onDelete,onlike,isLiked,currentUser,onComment}:PostCardProps) => {
     const isOwnPost = currentUser._id === post.user._id;
+    const {getTargettedUserProfile} = useAuthStore()
+    const router = useRouter()
     const handleDeletePost = () => {
         Alert.alert("Delete Post","Are you sure you want to delete this post?",[
             {
@@ -35,7 +39,9 @@ const PostCard = ({post,onDelete,onlike,isLiked,currentUser,onComment}:PostCardP
                 <View className='flex-1'>
                     <View className='flex-row items-center justify-between mb-1'>
                         <View className='flex-row items-center'>
-                            <Text className=' font-bold text-gray-900 mr-1'>@{post.user.fullName || post.user.username}</Text>
+                            <TouchableOpacity onPress={() => router.push(`/searchresult?username=${post.user.username}`)}>
+                                <Text className=' font-bold text-gray-900 mr-1'>@{post.user.fullName || post.user.username}</Text>
+                            </TouchableOpacity>
                             <Text className='text-gray-500 ml-1'>
                                 {formatDate(post.createdAt)}
                             </Text>
